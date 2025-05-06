@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Qualidade do Ar - Tempo Real</title>
+
+    <link rel="stylesheet" href="testeEstilos.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+      }
+      #dados {
+        font-size: 20px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Qualidade do Ar em Tempo Real</h1>
+    <input
+      type="text"
+      id="cidade"
+      placeholder="Digite a cidade (ex: sao-paulo)"
+    />
+    <button onclick="buscarAQI()">Buscar</button>
+    <div id="dados"></div>
+
+    <div
+      id="dados-sensor"
+      style="
+        display: flex;
+        gap: 128px;
+        justify-content: center;
+        margin-top: 32px;
+        height: 300px;
+      "
+    >
+    <canvas id="myChart"></canvas>
+      
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+  
+
+      async function pegardados() {
+        const response = await fetch("http://localhost:1880/pegar-dados");
+        const data = await response.json();
+
+        const ctx = document.getElementById("myChart");
+
+new Chart(ctx, {
+  type: "bar",
+  data: {
+    labels: data.map(({data:date}) => new Date(date).toLocaleDateString('pt-br')),
+
+    datasets: [
+      {
+        label: "Temperatura",
+        data: data.map(({temperatura}) => temperatura),
+        borderWidth: 1,
+      },
+      {
+        label: "Umidade",
+        data: data.map(({umidade}) => umidade),
+        borderWidth: 1,
+      },
+    ],
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  },
+});
+   
+        console.log("data", data);
+      }
+      pegardados();
+      async function buscarAQI() {
+        const cidade = document.getElementById("cidade").value.toLowerCase();
+        const token = "0ff469a59a2a31055c07bcbe5ca590cca3e7743d";
+        const url = `https://api.waqi.info/feed/${cidade}/?token=${token}`;
+
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+
+          if (data.status === "ok") {
+            const aqi = data.data.aqi;
+            const local = data.data.city.name;
+            document.getElementById("dados").innerHTML = `
+            <strong>Cidade:</strong> ${local} <br>
+            <strong>Índice AQI:</strong> ${aqi} <br>
+            <strong>Nível:</strong> ${interpretarAQI(aqi)}
+          `;
+          } else {
+            document.getElementById("dados").innerText =
+              "Erro ao buscar dados. Cidade não encontrada.";
+          }
+        } catch (error) {
+          console.error("Erro:", error);
+          document.getElementById("dados").innerText =
+            "Erro ao conectar com a API.";
+        }
+      }
+
+      function interpretarAQI(aqi) {
+        if (aqi <= 50) return "Bom 🟢";
+        if (aqi <= 100) return "Moderado 🟡";
+        if (aqi <= 150) return "Insalubre para grupos sensíveis 🟠";
+        if (aqi <= 200) return "Insalubre 🔴";
+        if (aqi <= 300) return "Muito Insalubre 🟣";
+        return "Perigoso ⚫";
+      }
+    </script>
+  </body>
+</html>

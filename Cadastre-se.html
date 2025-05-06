@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="PT-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSmart - Cadastro</title>
+
+    <link rel="stylesheet" href="estilos.css">
+
+</head>
+<body>
+    <form id="formCadastro">
+        <h1>Cadastro de usuário</h1>
+        <input type="text" placeholder="Nome Completo" id="nome" name="nome" required>
+        <input type="date" id="dataNascimento" name="dataNascimento" placeholder="Data de Nascimento" required>
+        <input type="text" placeholder="E-mail" id="login" name="login" required>
+        <input type="password" placeholder="Senha" id="senha" name="senha"required>
+        <input type="password" placeholder="Confirme a senha" id="conf_senha" name="conf_senha" required>
+        <button type="submit" value="Cadastrar"> Cadastrar </button>
+        <p>Já possui uma conta? <a href="Login.html"> LOGIN </a></p>
+    </form>
+    <p id="resposta"></p>
+
+    <script>
+      const form = document.getElementById('formCadastro');
+      const resposta = document.getElementById('resposta');
+  
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+  
+        const nome = document.getElementById('nome').value;
+        const dataNascimento = document.getElementById('dataNascimento').value;
+        const login = document.getElementById('login').value;
+        const senha = document.getElementById('senha').value;
+        const conf_senha = document.getElementById('conf_senha').value;
+  
+        const payload = {
+          nome: nome,
+          data_nascimento: dataNascimento,
+          email: login,
+          senha: senha,
+        };
+  
+        try {
+          const res = await fetch('http://localhost:1880/insert', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+  
+          if (res.ok) {
+            resposta.innerText = "Dados enviados com sucesso!";
+          } else {
+            resposta.innerText = "Erro ao enviar dados.";
+          }
+        } catch (err) {
+          resposta.innerText = "Falha na comunicação com o servidor.";
+          console.error(err);
+        }
+      });
+    </script>
+    
+</body>
+</html>

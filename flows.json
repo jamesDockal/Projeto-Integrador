@@ -1,0 +1,58 @@
+[
+    {
+        "id": "df6cff791fffb102",
+        "type": "tab",
+        "label": "Fluxo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "afba477a06bd8545",
+        "type": "http in",
+        "z": "df6cff791fffb102",
+        "name": "",
+        "url": "/pegar-dados",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 310,
+        "y": 140,
+        "wires": [
+            [
+                "6937bf13d4b3b5cd"
+            ]
+        ]
+    },
+    {
+        "id": "6937bf13d4b3b5cd",
+        "type": "function",
+        "z": "df6cff791fffb102",
+        "name": "function 1",
+        "func": "const data=[\n    {\n        id:1,\n        data:new Date(),\n        temperatura:21,\n        umidade:40\n    },{\n        id:2,\n        data:new Date(),\n        temperatura:34,\n        umidade:19\n    }\n]\nmsg.payload=data\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 140,
+        "wires": [
+            [
+                "c7eb10030e0fbcbc"
+            ]
+        ]
+    },
+    {
+        "id": "c7eb10030e0fbcbc",
+        "type": "http response",
+        "z": "df6cff791fffb102",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 730,
+        "y": 140,
+        "wires": []
+    }
+]

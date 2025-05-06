@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html lang="PT-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSmart - Login</title>
+
+    <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+    <form onsubmit="logar(event)">
+        <h1>Login</h1>
+        <input type="text" placeholder="E-mail ou usuário" id="login">
+        <input type="password" placeholder="Senha" id="senha">
+        <button type="submit" value="Entrar"> Entrar </button>
+        <p>Não possui uma conta? <a href="Cadastre-se.html"> CADASTRE-SE </a></p>
+
+    </form>
+
+    <script>
+        function logar(event) {
+            // Impede o comportamento padrão do formulário (recarregar a página)
+            event.preventDefault();
+
+            var login = document.getElementById('login').value;
+            var senha = document.getElementById('senha').value;
+
+            if (login == "admin" && senha == "admin") {
+                alert("Salve Breno");
+            } else {
+                alert('Usuário ou senha inválidos!');
+            }
+        }
+    </script>
+</body>
+</html>
