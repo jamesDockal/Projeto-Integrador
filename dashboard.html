@@ -18,7 +18,8 @@
     </style>
   </head>
   <body>
-    <h1>Qualidade do Ar em Tempo Real</h1>
+    <label for="">Busque AQI</label>
+    <br>
     <input
       type="text"
       id="cidade"
@@ -35,54 +36,59 @@
         justify-content: center;
         margin-top: 32px;
         height: 300px;
+        max-width: 80vw;
       "
     >
-    <canvas id="myChart"></canvas>
-      
+      <canvas id="myChart"></canvas>
     </div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-  
+      let myChart = null;
 
       async function pegardados() {
         const response = await fetch("http://localhost:1880/pegar-dados");
         const data = await response.json();
 
-        const ctx = document.getElementById("myChart");
+        // Format the data for the chart
+        const formattedData = {
+          labels: data.map(({ data: date }) =>
+            new Date(date).toLocaleDateString("pt-br")
+          ),
+          datasets: [
+            {
+              label: "Umidade",
+              data: data.map(({ umidade }) => umidade),
+            },
+            {
+              label: "Temperatura",
+              data: data.map(({ temperatura }) => temperatura),
+            },
+          ],
+        };
 
-new Chart(ctx, {
-  type: "bar",
-  data: {
-    labels: data.map(({data:date}) => new Date(date).toLocaleDateString('pt-br')),
+        // If a chart instance exists, destroy it before creating a new one
+        if (myChart) {
+          myChart.destroy();
+        }
 
-    datasets: [
-      {
-        label: "Temperatura",
-        data: data.map(({temperatura}) => temperatura),
-        borderWidth: 1,
-      },
-      {
-        label: "Umidade",
-        data: data.map(({umidade}) => umidade),
-        borderWidth: 1,
-      },
-    ],
-  },
-  options: {
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  },
-});
-   
-        console.log("data", data);
+        // Create a new Chart
+        const ctx = document.getElementById("myChart").getContext("2d");
+        myChart = new Chart(ctx, {
+          type: "line",
+          data: formattedData,
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
       }
-      pegardados();
+      setInterval(pegardados, 2000);
+
       async function buscarAQI() {
         const cidade = document.getElementById("cidade").value.toLowerCase();
         const token = "0ff469a59a2a31055c07bcbe5ca590cca3e7743d";

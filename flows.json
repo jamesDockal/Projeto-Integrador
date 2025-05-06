@@ -1,11 +1,49 @@
 [
     {
+        "id": "27f3bb04f76d9c42",
+        "type": "tab",
+        "label": "Fluxo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "df6cff791fffb102",
         "type": "tab",
         "label": "Fluxo 1",
         "disabled": false,
         "info": "",
         "env": []
+    },
+    {
+        "id": "abd6f4f453f40a59",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "db": "projeto_integrador",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "dc1222953a2a7d20",
+        "type": "serial-port",
+        "name": "",
+        "serialport": "COM3",
+        "serialbaud": "9600",
+        "databits": 8,
+        "parity": "none",
+        "stopbits": 1,
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": 10000
     },
     {
         "id": "afba477a06bd8545",
@@ -16,11 +54,11 @@
         "method": "get",
         "upload": false,
         "swaggerDoc": "",
-        "x": 310,
-        "y": 140,
+        "x": 150,
+        "y": 160,
         "wires": [
             [
-                "6937bf13d4b3b5cd"
+                "34eea7fb69ed7e9a"
             ]
         ]
     },
@@ -39,9 +77,7 @@
         "x": 540,
         "y": 140,
         "wires": [
-            [
-                "c7eb10030e0fbcbc"
-            ]
+            []
         ]
     },
     {
@@ -54,5 +90,119 @@
         "x": 730,
         "y": 140,
         "wires": []
+    },
+    {
+        "id": "708b7e8b46ecbd73",
+        "type": "debug",
+        "z": "df6cff791fffb102",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "551305d040cee2e3",
+        "type": "mysql",
+        "z": "df6cff791fffb102",
+        "mydb": "abd6f4f453f40a59",
+        "name": "",
+        "x": 290,
+        "y": 360,
+        "wires": [
+            [
+                "c7eb10030e0fbcbc",
+                "708b7e8b46ecbd73"
+            ]
+        ]
+    },
+    {
+        "id": "34eea7fb69ed7e9a",
+        "type": "function",
+        "z": "df6cff791fffb102",
+        "name": "function 2",
+        "func": "msg.topic = \"select * from dados limit 30\" \nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 160,
+        "y": 440,
+        "wires": [
+            [
+                "551305d040cee2e3"
+            ]
+        ]
+    },
+    {
+        "id": "0e5f409ccf43e7a7",
+        "type": "serial in",
+        "z": "df6cff791fffb102",
+        "name": "",
+        "serial": "dc1222953a2a7d20",
+        "x": 70,
+        "y": 560,
+        "wires": [
+            [
+                "c7d9a73cf8616131"
+            ]
+        ]
+    },
+    {
+        "id": "34f197b6dc50155c",
+        "type": "debug",
+        "z": "df6cff791fffb102",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "c7d9a73cf8616131",
+        "type": "function",
+        "z": "df6cff791fffb102",
+        "name": "function 3",
+        "func": "const data =  JSON.parse(msg.payload)\nmsg.topic =`insert into dados(umidade, temperatura) values (${data.umidade}, ${data.temperatura})`\n\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 540,
+        "wires": [
+            [
+                "61751b02884392df"
+            ]
+        ]
+    },
+    {
+        "id": "61751b02884392df",
+        "type": "mysql",
+        "z": "df6cff791fffb102",
+        "mydb": "abd6f4f453f40a59",
+        "name": "",
+        "x": 630,
+        "y": 540,
+        "wires": [
+            []
+        ]
     }
 ]
