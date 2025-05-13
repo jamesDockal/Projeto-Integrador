@@ -19,7 +19,7 @@
   </head>
   <body>
     <label for="">Busque AQI</label>
-    <br>
+    <br />
     <input
       type="text"
       id="cidade"
@@ -47,11 +47,10 @@
     <script>
       let myChart = null;
 
-      async function pegardados() {
+      async function montaGrafico() {
         const response = await fetch("http://localhost:1880/pegar-dados");
         const data = await response.json();
 
-        // Format the data for the chart
         const formattedData = {
           labels: data.map(({ data: date }) =>
             new Date(date).toLocaleDateString("pt-br")
@@ -68,11 +67,6 @@
           ],
         };
 
-        // If a chart instance exists, destroy it before creating a new one
-        if (myChart) {
-          myChart.destroy();
-        }
-
         // Create a new Chart
         const ctx = document.getElementById("myChart").getContext("2d");
         myChart = new Chart(ctx, {
@@ -87,7 +81,36 @@
           },
         });
       }
-      setInterval(pegardados, 2000);
+
+      async function atualizarGrafico() {
+        const response = await fetch("http://localhost:1880/pegar-dados");
+        const data = await response.json();
+
+        const formattedData = {
+          labels: data.map(({ data: date }) =>
+            new Date(date).toLocaleDateString("pt-br")
+          ),
+          datasets: [
+            {
+              label: "Umidade",
+              data: data.map(({ umidade }) => umidade),
+            },
+            {
+              label: "Temperatura",
+              data: data.map(({ temperatura }) => temperatura),
+            },
+          ],
+        };
+
+        myChart.data.labels = formattedData.labels;
+        myChart.data.datasets[0].data = formattedData.datasets[0].data;
+        myChart.data.datasets[1].data = formattedData.datasets[1].data;
+
+        myChart.update();
+      }
+
+      montaGrafico();
+      setInterval(atualizarGrafico, 2000);
 
       async function buscarAQI() {
         const cidade = document.getElementById("cidade").value.toLowerCase();
